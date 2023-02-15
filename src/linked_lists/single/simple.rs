@@ -33,11 +33,11 @@ impl<T> SimpleNode<T> {
     }
 }
 
-pub struct SimpleNodeiter<'a, T> {
+pub struct SimpleNodeIter<'a, T> {
     next: Option<&'a SimpleNode<T>>,
 }
 
-impl<'a, T> Iterator for SimpleNodeiter<'a, T> {
+impl<'a, T> Iterator for SimpleNodeIter<'a, T> {
     type Item = &'a T;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -71,11 +71,21 @@ impl<T> SimpleLinkedList<T> {
     }
 
     pub fn push(&mut self, node_value: T) {
-        match &self.root {
-            Some(node) => {
-                
+        if self.root.is_none() {
+            self.root = Some(SimpleNode::new(node_value));
+        } else {
+            let mut node = self.root.as_mut().unwrap();
+            while node.has_next() {
+                node = node.get_next_mut().as_mut().unwrap();
             }
-            None => self.root = Some(SimpleNode::new(node_value)),
+            node.add_next(node_value);
+        }
+    }
+
+    pub fn iter(&self) -> SimpleNodeIter<'_, T> {
+        match self.get_root() {
+            Some(root) => SimpleNodeIter { next: self.get_root() },
+            None => SimpleNodeIter { next: None }
         }
     }
 }
