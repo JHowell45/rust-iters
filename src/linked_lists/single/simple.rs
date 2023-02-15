@@ -76,7 +76,7 @@ impl<T> SimpleLinkedList<T> {
         } else {
             let mut node = self.root.as_mut().unwrap();
             while node.has_next() {
-                node = node.get_next_mut().as_mut().unwrap();
+                node = node.get_next_mut().unwrap();
             }
             node.add_next(node_value);
         }
